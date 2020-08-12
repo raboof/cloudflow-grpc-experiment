@@ -7,6 +7,6 @@ lazy val experiment = (project in file("."))
     scalaVersion := "2.12.11",
     runLocalConfigFile := Some("src/main/resources/local.conf"),
     libraryDependencies ++= Seq(
-      "com.typesafe.akka"      %% "akka-http-spray-json"      % "10.1.12",
+      "com.typesafe.akka" %% "akka-http2-support"      % "10.1.12",
     )
   )
