@@ -13,7 +13,7 @@ import akka.stream.scaladsl.{Flow, Source}
 import cloudflow.akkastream._
 import cloudflow.akkastream.util.scaladsl._
 import cloudflow.streamlets._
-import cloudflow.streamlets.avro._
+import cloudflow.streamlets.proto.ProtoOutlet
 import example.myapp.helloworld.grpc.{GreeterService, GreeterServiceHandler, HelloReply, HelloRequest}
 import grpc.reflection.v1alpha.reflection.ServerReflectionHandler
 
@@ -21,17 +21,21 @@ import scala.concurrent.Future
 import scala.util.Failure
 
 class SensorDataHttpIngress extends AkkaServerStreamlet {
-  def shape                = StreamletShape.empty
-
-  val implementation = new GreeterService {
-    override def sayHello(in: HelloRequest): Future[HelloReply] =
-      Future.successful(HelloReply(s"Good to see you using CloudFlow, ${in.name}"))
-    override def itKeepsTalking(in: Source[HelloRequest, NotUsed]): Future[HelloReply] = ???
-    override def itKeepsReplying(in: HelloRequest): Source[HelloReply, NotUsed] = ???
-    override def streamHellos(in: Source[HelloRequest, NotUsed]): Source[HelloReply, NotUsed] = ???
-  }
+  val out                  = ProtoOutlet[HelloRequest]("out", RoundRobinPartitioner)
+  def shape                = StreamletShape.withOutlets(out)
 
   override def createLogic = new HttpServerLogic(this) {
+    val sink = sinkRef(out)
+    val implementation = new GreeterService {
+      override def sayHello(in: HelloRequest): Future[HelloReply] = {
+        sink.write(in).map(_ => HelloReply(s"Good to see you using CloudFlow, ${in.name}"))
+      }
+
+      override def itKeepsTalking(in: Source[HelloRequest, NotUsed]): Future[HelloReply] = ???
+      override def itKeepsReplying(in: HelloRequest): Source[HelloReply, NotUsed] = ???
+      override def streamHellos(in: Source[HelloRequest, NotUsed]): Source[HelloReply, NotUsed] = ???
+    }
+
     override def route(): Route = complete(StatusCodes.ImATeapot)
 
     // TODO update cloudstate to Akka HTTP 10.2.0 and use newServerAt:
