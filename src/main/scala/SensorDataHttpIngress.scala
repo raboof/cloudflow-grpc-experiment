@@ -2,6 +2,7 @@ package sensordata
 
 import akka.grpc.scaladsl.ServerReflection
 import cloudflow.akkastream._
+import cloudflow.akkastream.util.scaladsl.GrpcServerLogic
 import cloudflow.streamlets._
 import cloudflow.streamlets.proto.ProtoOutlet
 import example.myapp.helloworld.grpc.{GreeterService, GreeterServiceHandler, HelloRequest}
