@@ -1,5 +1,7 @@
 Experimenting deploying a gRPC service as part of a CloudFlow app.
 
+Needs cloudflow from https://github.com/lightbend/cloudflow/pull/642
+
 Parts:
 * `src/main/protobuf/helloworld.proto` the protocol
 * `src/main/scala/GreeterServiceImpl` the service implementation
