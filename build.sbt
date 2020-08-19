@@ -23,8 +23,5 @@ PB.targets in Compile ~= (f => {
 scalaVersion := "2.12.12"
 //runLocalConfigFile := Some("src/main/resources/local.conf")
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-http" % "10.2.0",
-  "com.typesafe.akka" %% "akka-http-spray-json" % "10.2.0",
-  "com.typesafe.akka" %% "akka-http-jackson" % "10.2.0",
   "com.typesafe.akka" %% "akka-http2-support" % "10.2.0",
 )

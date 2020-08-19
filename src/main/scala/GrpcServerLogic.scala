@@ -18,27 +18,4 @@ abstract class GrpcServerLogic(server: Server)(implicit context: AkkaStreamletCo
   def handlers(): immutable.Seq[PartialFunction[HttpRequest, Future[HttpResponse]]]
 
   override def route(): Route = RouteDirectives.handle(ServiceHandler.concatOrNotFound(handlers(): _*))
-
-  // TODO this could be the new implementation in HttpServerLogic
-  // Perhaps add a run-time check that HTTP/2 is enabled?
-  override def run(): Unit = {
-    Http()
-      .newServerAt("0.0.0.0", containerPort)
-      .bind(route())
-      .map { binding ⇒
-        context.signalReady()
-        system.log.info(s"Bound to ${binding.localAddress.getHostName}:${binding.localAddress.getPort}")
-        // this only completes when StreamletRef executes cleanup.
-        context.onStop { () ⇒
-          system.log.info(s"Unbinding from ${binding.localAddress.getHostName}:${binding.localAddress.getPort}")
-          binding.unbind().map(_ ⇒ Dun)
-        }
-        binding
-      }
-      .andThen {
-        case Failure(cause) ⇒
-          system.log.error(cause, s"Failed to bind to $containerPort.")
-          context.stop()
-      }
-  }
 }
