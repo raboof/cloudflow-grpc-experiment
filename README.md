@@ -6,10 +6,8 @@ Parts:
 * `src/main/protobuf/helloworld.proto` the protocol
 * `src/main/scala/GreeterServiceImpl` the service implementation
 * `src/main/scala/SensorDataIngress` the ingress that hooks the service implementation into cloudflow
-* `src/main/scala/GrpcServerLogic` generic glue that could be in cloudflow (or a cf library)
 
 Notable:
-* Needed a tweak to PB.targets in build.sbt and in the cloudflow plugin. Perhaps we can avoid this with some more akka-grpc-specific code in cloudflow?
 * Only tested locally so far
 
 Testing:
